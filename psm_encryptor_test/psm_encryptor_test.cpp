@@ -27,7 +27,7 @@ int main()
     fread(kdev, 1, kdev_size, kdev_fd);
     fread(khapp, 1, khapp_size, hkapp_fd);
 
-    PsmEdataStatus stat = scePsmEdataEncrypt("test/Application/app.exe", "test/Application/app_encrypted.exe", "/Application/app.exe",
+    ScePsmEdataStatus stat = scePsmEdataEncrypt("test/Application/app.exe", "test/Application/app_encrypted.exe", "/Application/app.exe",
         ScePsmEdataType::ReadonlyIcvAndCrypto, kdev, kdev_size, (PsmHkapp*)khapp, khapp_size);
 
     printf("status = %x\n", stat);

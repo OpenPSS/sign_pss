@@ -2,9 +2,9 @@
 #define _PSM_ENCRYPTOR_HKAPP 1
 
 typedef struct aes_enc_section_hkapp {
-	unsigned char vita_hmac_key[0x10];
+	unsigned char vitaHmacKey[0x10];
 	unsigned char unk[0x10];
-	unsigned char android_hmac_key[0x10];
+	unsigned char androidHmacKey[0x10];
 	unsigned char unk1[0x20];
 	unsigned char game_key[0x10];
 	unsigned char unk2[0x110];

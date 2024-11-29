@@ -15,7 +15,7 @@ typedef enum ScePsmEdataType
 	WritableWholeSignature = -2147483644
 } ScePsmEdataType;
 
-typedef enum PsmEdataStatus
+typedef enum ScePsmEdataStatus
 {
 	SCE_OK = 0,
 	SCE_PSM_EDATA_ERROR_ALREADY_INITIALIZED = -2138111168,
@@ -53,7 +53,7 @@ typedef enum PsmEdataStatus
 	SCE_PSM_EDATA_ERROR_THREAD_MODULE = -2138111040,
 	SCE_PSM_EDATA_ERROR_VERIFY_ICV = -2138111067,
 	SCE_PSM_EDATA_ERROR_WHOLE_SIGNATULRE = -2138111065
-} PsmEdataStatus;
+} ScePsmEdataStatus;
 
 typedef struct psse_header {
 	char magic[0x4];
@@ -61,11 +61,12 @@ typedef struct psse_header {
 	uint64_t file_size;
 	int psse_type;
 	char content_id[0x2C];
-	char file_md5[0x10];
-	char install_path_hmac[0x20];
-	char file_iv[0x10];
-	char header_signature[0x100];
-	char whole_file_signature[0x100];
+	uint8_t file_md5[0x10];
+	uint8_t install_path_hmac[0x20];
+	uint8_t file_iv[0x10];
+	uint8_t header_signature[0x100];
+	uint8_t whole_file_signature[0x100];
+	uint8_t header_md5[0x10];
 } psse_header;
 
 typedef struct psse_block_signature {
@@ -75,16 +76,21 @@ typedef struct psse_block_signature {
 
 typedef struct PsmEdataCtx {
 	const char* infile;
+	const char* outFile;
 	const char* contentId;
-	const char* outfile;
 	const char* installPath;
-	const void* gameKey;
-	const void* vita_hmac_key;
-	const void* android_hmac_key;
-	const void* filename_key;
-	const void* psse_header_key;
-	const void* psse_header_iv;
+	const uint8_t* gameKey;
+	const uint8_t* vitaHmacKey;
+	const uint8_t* androidHmacKey;
+	const uint8_t* filenameKey;
+	const uint8_t* psseHeaderKey;
+	const uint8_t* psseHeaderIv;
 	ScePsmEdataType type;
 } PsmEdataCtx;
+
+const int G_PSM_EDATA_MAX_SIZE = 0x7FBFFD80;
+const char G_PSM_EDATA_MAGIC[4] {'P', 'S', 'S', 'E'};
+const int G_PSM_EDATA_VERSION = 0x1;
+const uint32_t G_PSM_EDATA_TYPES[] { 0x0, 0x1, 0x0, 0x3,0x4, 0x80000001, 0x0, 0x80000003, 0x0, 0x0 };
 
 #endif
