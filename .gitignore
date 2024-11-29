@@ -1,0 +1,6 @@
+openssl/*
+psm_encryptor/.vs/*
+psm_encryptor/build/*
+psm_encryptor/build-inter/*
+*.user
+*/.vs/*
