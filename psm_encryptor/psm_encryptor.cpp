@@ -162,7 +162,7 @@ ScePsmEdataStatus edata_plaintext_filesize_check(const char* fileName) {
     fseek(G_PLAINTEXT_EDATA_FILE_FD, 0, SEEK_SET);
 
     // check filesize is < max size
-    if (size <= G_PSM_EDATA_MAX_SIZE) return SCE_OK;
+    if (size <= PSM_EDATA_MAX_FILE_SIZE) return SCE_OK;
 
     // close the file if this isnt the case and return error
     if (G_PLAINTEXT_EDATA_FILE_FD) fclose(G_PLAINTEXT_EDATA_FILE_FD);
@@ -217,14 +217,14 @@ ScePsmEdataStatus setup_psse_header(PsmEdataCtx edataContext, psse_header* psseH
     memcpy_s(psseHeader->install_path_hmac, sizeof(psse_header) - offsetof(psse_header, install_path_hmac), shaOut, sizeof(shaOut));
     
     // generate IV
-    MD5((uint8_t*)psseHeader, offsetof(psse_header, file_iv), psseHeader->header_md5);
+    MD5((uint8_t*)psseHeader, offsetof(psse_header, file_iv), md5Out);
 
     // encrypt filename hmac, and md5_header
     aes_cbc_encrypt(edataContext.psseHeaderKey, KEY_SIZE, edataContext.psseHeaderIv, KEY_SIZE, shaOut, sizeof(shaOut), psseHeader->install_path_hmac);
-    aes_cbc_encrypt(edataContext.psseHeaderKey, KEY_SIZE, edataContext.psseHeaderIv, KEY_SIZE, psseHeader->header_md5, sizeof(psse_header::header_md5), psseHeader->file_iv);
+    aes_cbc_encrypt(edataContext.psseHeaderKey, KEY_SIZE, edataContext.psseHeaderIv, KEY_SIZE, md5Out, sizeof(md5Out), psseHeader->file_iv);
 
     // sha256 the header
-    SHA256((uint8_t*)&psseHeader, offsetof(psse_header, header_signature), shaOut);
+    SHA256((uint8_t*)psseHeader, offsetof(psse_header, header_signature), shaOut);
 
     // sign it
     get_edata_header_private_key(&der, &len);
@@ -236,7 +236,37 @@ ScePsmEdataStatus setup_psse_header(PsmEdataCtx edataContext, psse_header* psseH
     return SCE_OK;
 }
 
+ScePsmEdataStatus get_global_psse_header(psse_header* psseHeader, int* toRead)
+{
+    memcpy_s(&G_PSSE_HEADER, sizeof(psse_header), psseHeader, sizeof(psse_header));
+    G_CURRENT_BLOCK = 0;
+    G_BLOCK_SIZE = PSM_EDATA_FIRST_BLOCK_SIZE;
+    G_NEED_SIGNATURE_BLOCK = 0;
+    memset(G_PSSE_BLOCK_SIGNATURES.android_hmac, 0, sizeof(G_PSSE_BLOCK_SIGNATURES.android_hmac));
+    memset(G_PSSE_BLOCK_SIGNATURES.vita_hmac, 0, sizeof(G_PSSE_BLOCK_SIGNATURES.vita_hmac));
+    *toRead = PSM_EDATA_FIRST_BLOCK_SIZE;
+    return SCE_OK;
+}
+
+size_t write_psse_header_to_disk()
+{
+    size_t result = fwrite(&G_PSSE_HEADER, 1, sizeof(psse_header), G_CIPHERTEXT_EDATA_FILE_FD);
+    G_CIPHERTEXT_EDATA_FILE_OFFSET += result;
+    return result;
+}
+
+ScePsmEdataStatus read_from_plaintext_file(uint8_t* buffer, int* totalRead)
+{
+    *totalRead = fread(buffer, 1, *totalRead, G_PLAINTEXT_EDATA_FILE_FD);
+    return SCE_OK;
+}
+
+
 ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext) {
+
+    uint8_t vitaHmac[SHA256_SIZE];
+    uint8_t androidHmac[SHA256_SIZE];
+    
     if (!edataContext.infile) return SCE_PSM_EDATA_ERROR_INVAL;
     if (!edataContext.outFile) return SCE_PSM_EDATA_ERROR_INVAL;
     if (!edataContext.contentId) return SCE_PSM_EDATA_ERROR_INVAL;
@@ -263,7 +293,52 @@ ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext) {
     psse_header psseHeader;
     res = setup_psse_header(edataContext, &psseHeader);
     if (res == SCE_OK) {
+        uint8_t filePlaintext[PSM_EDATA_MAX_BLOCK_SIZE];
+        memset(filePlaintext, 0, sizeof(filePlaintext));
 
+        int len;
+        res = get_global_psse_header(&psseHeader, &len);
+        if (res == SCE_OK) {
+            write_psse_header_to_disk();
+            res = read_from_plaintext_file(filePlaintext, &len);
+            if (len) {
+                while (1) {
+                    uint8_t blockCiphertext[PSM_EDATA_MAX_BLOCK_SIZE];
+                    uint8_t blockPlaintext[PSM_EDATA_MAX_BLOCK_SIZE];
+                    memcpy_s(blockPlaintext, sizeof(blockPlaintext), filePlaintext, len);
+
+                    int ciphertextSize = len;
+                    if ((len & 0xF) != 0)
+                        ciphertextSize = 0x10 * ((len >> 4) + 1);
+
+                    if (G_EDATA_TYPE == ReadonlyIcvAndCrypto) // encrypt this block
+                    {
+                        uint8_t ivMask[sizeof(psse_header::file_iv)]; // calculate IV of current block
+                        memset(ivMask, 0, sizeof(ivMask));
+                        memcpy_s(ivMask, sizeof(ivMask), &G_CURRENT_BLOCK, sizeof(G_CURRENT_BLOCK));
+
+                        for (int i = 0; i < sizeof(ivMask); i++) {
+                            ivMask[i] ^= psseHeader.file_iv[i];
+                        }
+
+                        aes_cbc_encrypt(edataContext.gameKey, KEY_SIZE, ivMask, sizeof(ivMask), blockPlaintext, ciphertextSize, blockCiphertext);
+                    }
+                    else if (G_EDATA_TYPE == ReadonlyIcv || G_EDATA_TYPE == ReadonlyWholeSignature) {
+                        memcpy_s(blockCiphertext, sizeof(blockCiphertext), blockPlaintext, ciphertextSize);
+                    }
+
+                    if (G_EDATA_TYPE != ReadonlyWholeSignature) { // calculate hmac
+                        memcpy_s(&blockCiphertext[ciphertextSize], sizeof(blockCiphertext) - ciphertextSize, &G_CURRENT_BLOCK, sizeof(&G_CURRENT_BLOCK));                        
+                        memset(vitaHmac, 0, sizeof(vitaHmac));
+                        sha256_hmac(edataContext.vitaHmacKey, KEY_SIZE, blockCiphertext, ciphertextSize + KEY_SIZE, vitaHmac);
+                        memset(androidHmac, 0, sizeof(androidHmac));
+                        sha256_hmac(edataContext.androidHmacKey, KEY_SIZE, blockCiphertext, ciphertextSize + KEY_SIZE, androidHmac);
+                    }
+
+
+                }
+            }
+        }
     }
 
     return res;

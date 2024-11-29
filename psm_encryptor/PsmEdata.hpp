@@ -66,7 +66,6 @@ typedef struct psse_header {
 	uint8_t file_iv[0x10];
 	uint8_t header_signature[0x100];
 	uint8_t whole_file_signature[0x100];
-	uint8_t header_md5[0x10];
 } psse_header;
 
 typedef struct psse_block_signature {
@@ -88,7 +87,10 @@ typedef struct PsmEdataCtx {
 	ScePsmEdataType type;
 } PsmEdataCtx;
 
-const int G_PSM_EDATA_MAX_SIZE = 0x7FBFFD80;
+const int PSM_EDATA_MAX_BLOCK_SIZE = 0x8010;
+const int PSM_EDATA_FIRST_BLOCK_SIZE = 0x7980;
+const int PSM_EDATA_MAX_FILE_SIZE = 0x7FBFFD80;
+
 const char G_PSM_EDATA_MAGIC[4] {'P', 'S', 'S', 'E'};
 const int G_PSM_EDATA_VERSION = 0x1;
 const uint32_t G_PSM_EDATA_TYPES[] { 0x0, 0x1, 0x0, 0x3,0x4, 0x80000001, 0x0, 0x80000003, 0x0, 0x0 };

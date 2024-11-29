@@ -4,10 +4,10 @@
 #include <cstdint>
 #include "PsmEdata.hpp"
 
-#define KEY_SIZE 0x10
-#define ASCII_KEY_SIZE 0x21
-#define MD5_SIZE KEY_SIZE
-#define SHA256_SIZE (KEY_SIZE * 2)
+const int KEY_SIZE = 0x10;
+const int ASCII_KEY_SIZE = 0x21;
+const int MD5_SIZE = KEY_SIZE;
+const int SHA256_SIZE = (KEY_SIZE * 2);
 
 ScePsmEdataStatus aes_cbc_encrypt(const uint8_t* key, size_t key_size, const uint8_t* iv, size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output);
 ScePsmEdataStatus aes_cbc_decrypt(const uint8_t* key, size_t key_size, const uint8_t* iv, size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output);
