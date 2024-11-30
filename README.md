@@ -1,12 +1,15 @@
 # sign_pss
 
-Tool to sign PlayStation Mobile games to run under Retail PlayStation Mobile (PCSI10007 & PCSI10010) 
-this can *technically* even be used to run PSM homebrew on offical firmware 3.74. 
+Tool to sign PlayStation Mobile applications to run under 
+PlayStation Mobile Runtime Package (PCSI10007) and PlayStation Mobile Runtime Package for Unity (PCSI10010) 
 
-however doing so would require (any) valid PSM license, 
-which is difficult given that the servers for PSM were shut down.
+this can *technically* even be used to run PSM homebrew on offical firmware 3.74. 
+however doing so would require (any) valid PSM license, (you would just sign an app with the same keys & contentid as an offical app)
+the issue is of course that you can no longer purchase PSM content from the PS Store, making obtaining a license difficult.
 
 This also works for the Android version of PlayStation Mobile.
+
+can be used easily under NoPsmDrm however.
 
 ```
 usage: sign_pss <game_folder> <output_folder> <content_id> [game_key] [vita_hmac_key] [android_hmac_key]
