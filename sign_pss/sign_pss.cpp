@@ -107,7 +107,7 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 	
 	std::cout << "Signing files ... " << std::endl;
 
-	if(!recursiveEncryptOrCopy(inAppFolder, outDir, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
+	if(!recursiveEncryptOrCopy(inAppFolder, applicationFolder, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
 
 	std::cout << "Creating edata.list & psse.list" << std::endl;
 
