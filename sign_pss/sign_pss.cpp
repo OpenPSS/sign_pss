@@ -19,9 +19,14 @@ bool doEncrypt(std::string path) {
 
 	std::string mustEncryptExt[]{ ".exe", ".cgx", ".dll" };
 	std::string encryptBlacklist[]{ "edata.list", "app.info", "app.cfg", "psse.list" };
+	std::string extBlacklist[]{ ".mdb" };
 
 	for (std::string encExtension : mustEncryptExt) {
 		if (_stricmp(encExtension.c_str(), extension.c_str()) == 0) return true;
+	}
+
+	for (std::string ext : extBlacklist) {
+		if (_stricmp(ext.c_str(), extension.c_str()) == 0) return false;
 	}
 
 	for (std::string blacklistedFile : encryptBlacklist) {
