@@ -76,29 +76,38 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 	return true;
 }
 
-bool signApp(std::string applicationFolder, std::string outDir, std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey) {
+bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey) {
 
-	if (!fileExist(applicationFolder + "/app.info")) {
-		std::cout << "app.info could not be found within " << applicationFolder << std::endl;
-		std::cout << "please make sure the input folder is the one containing app.info." << std::endl;
+	if (!fileExist(inDir + "/Application/app.info")) {
+		std::cout << "/Application/app.info could not be found within " << inDir << std::endl;
+		std::cout << "please make sure the input folder is the one containing /Application/app.info." << std::endl;
 		return false;
 	}
 
 	std::string appPrefix = "/Application";
-	std::string outAppFolder = outDir + appPrefix;
-	std::string licenseFolder = outDir + "/License";
-	std::string systemFolder = outDir + "/System";
+	std::string licensePrefix = "/License";
+	std::string systemPrefix = "/System";
+
+
+	std::string inAppFolder = inDir + appPrefix;
+	std::string applicationFolder = outDir + appPrefix;
+	std::string licenseFolder = outDir + licensePrefix;
+	std::string systemFolder = outDir + systemPrefix;
+
+	createDirectories(applicationFolder);
+	createDirectories(licenseFolder);
+	createDirectories(systemFolder);
 
 	std::vector<std::string> edataList;
 	
 	std::cout << "Signing files ... " << std::endl;
 
-	if(!recursiveEncryptOrCopy(applicationFolder, outAppFolder, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
+	if(!recursiveEncryptOrCopy(inAppFolder, outDir, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
 
 	std::cout << "Creating edata.list & psse.list" << std::endl;
 
 	// create edata.list & psse.list
-	std::ofstream psseStream(outAppFolder + "/edata.list", std::ios::out | std::ios::trunc);
+	std::ofstream psseStream(applicationFolder + "/edata.list", std::ios::out | std::ios::trunc);
 	for (std::string edataFile : edataList) {
 		std::string line = edataFile.substr(appPrefix.length() + 1);
 		if (line.empty()) continue;
@@ -107,10 +116,9 @@ bool signApp(std::string applicationFolder, std::string outDir, std::string cont
 	}
 	psseStream.close();
 
-	if (scePsmEdataEncryptForRetail(std::string(outAppFolder + "/edata.list").c_str(), std::string(outAppFolder + "/psse.list").c_str(), "/Application/psse.list", ReadonlyIcvAndCrypto, contentId.c_str(), gameKey, vitaHmacKey, androidHmacKey) != SCE_OK) return false;
+	if (scePsmEdataEncryptForRetail(std::string(applicationFolder + "/edata.list").c_str(), std::string(applicationFolder + "/psse.list").c_str(), "/Application/psse.list", ReadonlyIcvAndCrypto, contentId.c_str(), gameKey, vitaHmacKey, androidHmacKey) != SCE_OK) return false;
 
 	std::cout << "Creating fake licenses" << std::endl;
-	createDirectories(licenseFolder);
 
 	// create psmdrm license
 	ScePsmDrmLicense license;
@@ -136,7 +144,6 @@ bool signApp(std::string applicationFolder, std::string outDir, std::string cont
 	fakeRifAndroid.close();
 
 	std::cout << "Creating content_id file" << std::endl;
-	createDirectories(systemFolder);
 	
 	char contentIdBytes[0x30];
 	memset(contentIdBytes, 0, sizeof(contentIdBytes));
@@ -151,17 +158,17 @@ bool signApp(std::string applicationFolder, std::string outDir, std::string cont
 }
 
 int main(int argc, char** argv)
-{
-	char buildVersion[0x20];
-	char buildDate[0x40];
-	scePsmGetVersion(buildVersion, buildDate);
+{	
+	std::string exeName = "sign_pss";
+	if(argc > 1) exeName = getFilename(argv[0]);
 
-	std::cout << "sign_pss.exe by Li of The Crystal System" << std::endl;
+
+	std::cout << exeName << " by Li of The Crystal System" << std::endl;
 
 	if (argc < 4) {
-		std::cout << "Usage: sign_pss <application_folder> <output_folder> <content_id> [game_key] [vita_hmac] [android_hmac]" << std::endl;
-		std::cout << "application_folder - the folder containing the plaintext PSM game files (app.info and others)" << std::endl;
-		std::cout << "content_id - the content id to use for PSSE signature, eg; UM0178-NPNA00124_00-0000000000000000" << std::endl;
+		std::cout << "Usage: " << exeName << " <game_folder> <output_folder> <content_id> [game_key] [vita_hmac] [android_hmac]" << std::endl;
+		std::cout << "game_folder - the folder containing the plaintext PSM game files (/Application, /System, etc)" << std::endl;
+		std::cout << "content_id - the content id to use for PSSE signature, eg; UM0000-NPNA99999_00-0000000000000000" << std::endl;
 		std::cout << "game_key - game specific key used to encrypt the data, found in RIF" << std::endl;
 		std::cout << "vita_hmac - HMAC key used for verifying psm file integrity on VITA, found in vita psm RIF" << std::endl;
 		std::cout << "android_hmac - HMAC key used for verifying psm file integrity on ANDROID, found in android psm RIF" << std::endl;
@@ -189,14 +196,17 @@ int main(int argc, char** argv)
 	if (argc < 7) RAND_bytes(androidHmac, sizeof(androidHmac));
 	else hex2bin(androidHmac, (unsigned char*)argv[6], sizeof(androidHmac));
 
-	printBuffer("Using GAME_KEY: ", gameKey, sizeof(gameKey));
-	printBuffer("Using VITA_HMAC: ", vitaHmac, sizeof(vitaHmac));
+	printBuffer("Using GAME_KEY:     ", gameKey, sizeof(gameKey));
+	printBuffer("Using VITA_HMAC:    ", vitaHmac, sizeof(vitaHmac));
 	printBuffer("Using ANDROID_HMAC: ", androidHmac, sizeof(androidHmac));
 
 	// actually sign the application
 	if (signApp(appFolder, signedAppFolder, contentId, gameKey, vitaHmac, androidHmac)) {
 		std::cout << "Application signing success!" << std::endl;
 		return 0;
+	}
+	else {
+		std::cerr << "Application signing failed." << std::endl;
 	}
 	return -1;
 }
