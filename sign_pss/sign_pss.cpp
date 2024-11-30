@@ -38,11 +38,11 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 
 	createDirectories(dstFolder.c_str());
 
-	void* handle = open_directory(srcFolder.c_str());
+	void* handle = openDirectory(srcFolder.c_str());
 
 	std::string nextFile;
 	bool isDirectory;
-	read_directory(handle, nextFile, &isDirectory);
+	readDirectory(handle, nextFile, &isDirectory);
 
 	std::string dstFolderName = getFilename(dstFolder);
 
@@ -70,7 +70,7 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 		}
 
 
-	} while (read_directory(handle, nextFile, &isDirectory));
+	} while (readDirectory(handle, nextFile, &isDirectory));
 
 
 	return true;
@@ -162,16 +162,16 @@ int main(int argc, char** argv)
 	std::string exeName = "sign_pss";
 	if(argc > 1) exeName = getFilename(argv[0]);
 
-
 	std::cout << exeName << " by Li of The Crystal System" << std::endl;
 
 	if (argc < 4) {
-		std::cout << "Usage: " << exeName << " <game_folder> <output_folder> <content_id> [game_key] [vita_hmac] [android_hmac]" << std::endl;
+		std::cout << "Usage: " << exeName << " <game_folder> <output_folder> <content_id> [game_key] [vita_hmac_key] [android_hmac_key]" << std::endl;
+		std::cout << std::endl;
 		std::cout << "game_folder - the folder containing the plaintext PSM game files (/Application, /System, etc)" << std::endl;
 		std::cout << "content_id - the content id to use for PSSE signature, eg; UM0000-NPNA99999_00-0000000000000000" << std::endl;
 		std::cout << "game_key - game specific key used to encrypt the data, found in RIF" << std::endl;
-		std::cout << "vita_hmac - HMAC key used for verifying psm file integrity on VITA, found in vita psm RIF" << std::endl;
-		std::cout << "android_hmac - HMAC key used for verifying psm file integrity on ANDROID, found in android psm RIF" << std::endl;
+		std::cout << "vita_hmac_key - HMAC key used for verifying psm file integrity on VITA, found in vita psm RIF" << std::endl;
+		std::cout << "android_hmac_key - HMAC key used for verifying psm file integrity on ANDROID, found in android psm RIF" << std::endl;
 		std::cout << std::endl;
 		std::cout << "Options within [square brackets] are optional, if not included a random value will be used for it instead." << std::endl;
 		std::cout << "also; a NoPsmDrm FAKE.RIF will be generated for the content_id specified." << std::endl;

@@ -13,11 +13,11 @@ typedef struct {
 } directoryHandle;
 
 
-void create_directory(std::string path) {
+void createDirectory(std::string path) {
 	CreateDirectoryA(path.c_str(), NULL);
 }
 
-void* open_directory(std::string path) {
+void* openDirectory(std::string path) {
 	directoryHandle* handle = new directoryHandle();
 	memset(handle, 0, sizeof(directoryHandle));
 
@@ -29,7 +29,7 @@ void* open_directory(std::string path) {
 	return handle;
 }
 
-bool read_directory(void* dfd, std::string& outputFilename, bool* isDirectory) {
+bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
 	directoryHandle* handle = (directoryHandle*)dfd;
 	if (handle == NULL) return false;
 	if (handle->handle == NULL) return false;
@@ -45,11 +45,11 @@ bool read_directory(void* dfd, std::string& outputFilename, bool* isDirectory) {
 	}
 	else {
 		if (FindNextFileA(handle->handle, &handle->findData) == FALSE) return false;
-		return read_directory(handle, outputFilename, isDirectory);
+		return readDirectory(handle, outputFilename, isDirectory);
 	}
 }
 
-void close_directory(void* dfd) {
+void closeDirectory(void* dfd) {
 	directoryHandle* handle = (directoryHandle*)dfd;
 
 	if (handle == NULL) return;
@@ -90,10 +90,10 @@ void createDirectories(const std::string path) {
 	for (int i = 0; i < path.length(); i++) {
 		if (path[i] == '/' || path[i] == '\\') {
 			partialPath = path.substr(0, i);
-			create_directory(partialPath);
+			createDirectory(partialPath);
 		}
 	}
-	create_directory(path);
+	createDirectory(path);
 }
 
 bool fileExist(const std::string path) {

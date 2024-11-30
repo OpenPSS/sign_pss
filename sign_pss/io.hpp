@@ -3,10 +3,10 @@
 
 #include <string>
 
-void create_directory(std::string path);
-void* open_directory(std::string path);
-bool read_directory(void* dfd, std::string& outputFilename, bool* isDirectory);
-void close_directory(void* dfd);
+void createDirectory(std::string path);
+void* openDirectory(std::string path);
+bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory);
+void closeDirectory(void* dfd);
 
 bool fileExist(std::string file);
 void copyFile(std::string src, std::string dst);
