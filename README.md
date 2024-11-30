@@ -40,6 +40,5 @@ Maybe someday:
 
 Building: 
 - depends on openssl1_0_1a, its static linked in the release binaries
-- 
 - this repository also contains a fairly complete de-compilation of psm_encryptor32.dll,
 changes i made to it are #ifdef with _PSM_SIGNER_BUILD 
