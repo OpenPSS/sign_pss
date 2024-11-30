@@ -23,4 +23,4 @@ android_hmac_key - HMAC key used for verifying psm file integrity on ANDROID, fo
 ```
 
 - this repository also contains a fairly complete de-compilation of psm_encryptor32.dll.
-
+- depends on openssl1_0_1a, its static linked in the release binaries
