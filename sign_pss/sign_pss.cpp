@@ -95,9 +95,9 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 
 
 	std::string inAppFolder = inDir + appPrefix;
-	std::string applicationFolder = outDir + appPrefix;
-	std::string licenseFolder = outDir + licensePrefix;
-	std::string systemFolder = outDir + systemPrefix;
+	std::string applicationFolder = outDir + "/RO"+ appPrefix;
+	std::string licenseFolder = outDir + "/RO" + licensePrefix;
+	std::string systemFolder = outDir + "/RW" + systemPrefix;
 
 	createDirectories(applicationFolder);
 	createDirectories(licenseFolder);
