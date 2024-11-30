@@ -1,6 +1,6 @@
 # sign_pss
 
-Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI10007) 
+Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI10011) 
 
 this can *technically* even be used to run PSM homebrew on offical firmware 3.74. 
 however doing so would require (any) valid PSM license, (you would just sign an app with the same keys & contentid as an offical app)
@@ -40,6 +40,5 @@ Maybe someday:
 
 Building: 
 - depends on openssl1_0_1a, its static linked in the release binaries
-- 
 - this repository also contains a fairly complete de-compilation of psm_encryptor32.dll,
 changes i made to it are #ifdef with _PSM_SIGNER_BUILD 
