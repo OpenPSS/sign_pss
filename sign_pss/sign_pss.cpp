@@ -162,8 +162,9 @@ int main(int argc, char** argv)
 	std::string exeName = "sign_pss";
 	if(argc > 1) exeName = getFilename(argv[0]);
 
-	std::cout << exeName << " by Li of The Crystal System" << std::endl;
-
+	std::cout << exeName << " by OpenPSS" << std::endl;
+	std::cout << "Developed by Li of The Crystal System" << std::endl;
+	
 	if (argc < 4) {
 		std::cout << "Usage: " << exeName << " <game_folder> <output_folder> <content_id> [game_key] [vita_hmac_key] [android_hmac_key]" << std::endl;
 		std::cout << std::endl;
