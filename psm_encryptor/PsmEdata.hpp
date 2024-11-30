@@ -1,6 +1,7 @@
 #ifndef _PSM_ENCRYPTOR_EDATA
 #define _PSM_ENCRYPTOR_EDATA 1
 #include <cstdint>
+#include "PsmHkapp.hpp"
 
 typedef enum ScePsmEdataType
 {
@@ -9,6 +10,7 @@ typedef enum ScePsmEdataType
 	ReadonlyIcvAndCrypto = 1,
 	ReadonlyIcvAndScramble = 2,
 	ReadonlyWholeSignature = 4,
+	WritableIcvUnknown = -2147483646,
 	WritableIcv = -2147483645,
 	WritableIcvAndCrypto = -2147483647,
 	WritableIcvAndScramble = -2139095038,
@@ -69,8 +71,8 @@ typedef struct psse_header {
 } psse_header;
 
 typedef struct psse_block_signature {
-	char vita_hmac[0x200];
-	char android_hmac[0x200];
+	uint8_t android_hmac[0x200];
+	uint8_t vita_hmac[0x200];
 } psse_block_signature;
 
 typedef struct PsmEdataCtx {
@@ -88,11 +90,22 @@ typedef struct PsmEdataCtx {
 } PsmEdataCtx;
 
 const int PSM_EDATA_MAX_BLOCK_SIZE = 0x8010;
+
+const int PSM_EDATA_NO_SIG_BLOCK_SIZE = 0x8000;
+const int PSM_EDATA_SIG_BLOCK_SIZE = 0x7C00;
 const int PSM_EDATA_FIRST_BLOCK_SIZE = 0x7980;
+
 const int PSM_EDATA_MAX_FILE_SIZE = 0x7FBFFD80;
+const int PSM_EDATA_BLOCKS_PER_SIGNATURE = 0x10;
+const int PSM_CONTENT_ID_SIZE = 0x2A;
 
 const char G_PSM_EDATA_MAGIC[4] {'P', 'S', 'S', 'E'};
 const int G_PSM_EDATA_VERSION = 0x1;
 const uint32_t G_PSM_EDATA_TYPES[] { 0x0, 0x1, 0x0, 0x3,0x4, 0x80000001, 0x0, 0x80000003, 0x0, 0x0 };
+
+ScePsmEdataStatus get_content_id(char* contentId);
+ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devPkcs12Size, const PsmHkapp* hostKdbg, size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key);
+ScePsmEdataStatus get_psse_header_keys(uint8_t* header_key, uint8_t* header_iv);
+ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext);
 
 #endif

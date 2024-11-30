@@ -27,10 +27,8 @@ int main()
     fread(kdev, 1, kdev_size, kdev_fd);
     fread(khapp, 1, khapp_size, hkapp_fd);
 
-    ScePsmEdataStatus stat = scePsmEdataEncrypt("test/Application/app.exe", "test/Application/app_encrypted.exe", "/Application/app.exe",
+    ScePsmEdataStatus stat = scePsmEdataEncrypt("test/Application/apple.psmvideo", "test/Application/apple.psmvideo.encrypted", "/Application/apple.psmvideo",
         ScePsmEdataType::ReadonlyIcvAndCrypto, kdev, kdev_size, (PsmHkapp*)khapp, khapp_size);
-
-    printf("status = %x\n", stat);
 
     free(kdev);
     free(khapp);

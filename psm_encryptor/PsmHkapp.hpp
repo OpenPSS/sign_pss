@@ -5,7 +5,7 @@ typedef struct aes_enc_section_hkapp {
 	unsigned char vitaHmacKey[0x10];
 	unsigned char unk[0x10];
 	unsigned char androidHmacKey[0x10];
-	unsigned char unk1[0x20];
+	unsigned char unk1[0x30];
 	unsigned char game_key[0x10];
 	unsigned char unk2[0x110];
 } aes_enc_section_hkapp;
@@ -25,7 +25,6 @@ typedef struct PsmHkapp {
 	uint64_t unk2;
 	uint64_t unk4;
 	char app_name[0x58];
-	//char aes_enc_section[0x180];
 	aes_enc_section_hkapp aes_section;
 	rsa_enc_section_hkapp rsa_section;
 	char unk6[0x100];

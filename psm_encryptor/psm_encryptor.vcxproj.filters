@@ -27,6 +27,9 @@
     <ClCompile Include="OpenSSL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="PsmEdata.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="PsmEdata.hpp">

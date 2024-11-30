@@ -22,6 +22,7 @@ typedef struct IUnknown IUnknown;
 #include <openssl/aes.h>
 #include <openssl/md5.h>
 #include <openssl/sha.h>
+#include <openssl/err.h>
 #include <openssl/hmac.h>
 }
 
