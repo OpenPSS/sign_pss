@@ -171,7 +171,7 @@
 #define NID_pkcs7			20
 #define OBJ_pkcs7			OBJ_pkcs,7L
 
-#define LN_pkcs7_data			"pkcs7-data"
+#define LN_pkcs7_data			"pkcs7-findData"
 #define NID_pkcs7_data			21
 #define OBJ_pkcs7_data			OBJ_pkcs7,1L
 

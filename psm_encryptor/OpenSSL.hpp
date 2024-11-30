@@ -5,7 +5,6 @@
 #include "PsmEdata.hpp"
 
 const int KEY_SIZE = 0x10;
-const int ASCII_KEY_SIZE = 0x21;
 const int MD5_SIZE = KEY_SIZE;
 const int SHA256_SIZE = (KEY_SIZE * 2);
 

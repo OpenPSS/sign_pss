@@ -1,8 +1,10 @@
 #include "PsmKeys.hpp"
 #include "PsmEdata.hpp"
 #include "PsmHkapp.hpp"
-#include "Sony.hpp"
+
+#include "HexKey.hpp"
 #include "OpenSSL.hpp"
+
 #include <cstdio>
 #include <cstdint>
 #include <cstring>
@@ -30,7 +32,6 @@ ScePsmEdataStatus get_content_id(char* contentId) {
         return SCE_PSM_EDATA_ERROR_INVAL;
 
     strncpy_s(contentId, sizeof(G_CONTENTID), G_CONTENTID, strlen(G_CONTENTID));
-
     return SCE_OK;
 }
 
@@ -444,8 +445,7 @@ ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext) {
 
 
                     // align to aes block size
-                    int ciphertextSize = len;
-                    if ((len % AES_BLOCK_SIZE) != 0) ciphertextSize = AES_BLOCK_SIZE * ((len >> 4) + 1);
+                    if ((len % AES_BLOCK_SIZE) != 0) len = AES_BLOCK_SIZE * ((len >> 4) + 1);
 
                     if (G_EDATA_TYPE == ReadonlyIcvAndCrypto)
                     {
@@ -458,18 +458,18 @@ ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext) {
                         }
 
                         // encrypt this block
-                        aes_cbc_encrypt(edataContext.gameKey, KEY_SIZE, ivMask, sizeof(ivMask), blockPlaintext, ciphertextSize, blockCiphertext);
+                        aes_cbc_encrypt(edataContext.gameKey, KEY_SIZE, ivMask, sizeof(ivMask), blockPlaintext, len, blockCiphertext);
                     }
                     else if (G_EDATA_TYPE == ReadonlyIcv || G_EDATA_TYPE == ReadonlyWholeSignature) {
-                        memcpy_s(blockCiphertext, sizeof(blockCiphertext), blockPlaintext, ciphertextSize);
+                        memcpy_s(blockCiphertext, sizeof(blockCiphertext), blockPlaintext, len);
                     }
 
                     if (G_EDATA_TYPE != ReadonlyWholeSignature) { // calculate hmac
-                        memcpy_s(&blockCiphertext[ciphertextSize], sizeof(blockCiphertext) - ciphertextSize, &G_CURRENT_BLOCK, sizeof(&G_CURRENT_BLOCK));
+                        memcpy_s(&blockCiphertext[len], sizeof(blockCiphertext) - len, &G_CURRENT_BLOCK, sizeof(&G_CURRENT_BLOCK));
                         memset(vitaHmac, 0, sizeof(vitaHmac));
-                        sha256_hmac(edataContext.vitaHmacKey, KEY_SIZE, blockCiphertext, ciphertextSize + KEY_SIZE, vitaHmac);
+                        sha256_hmac(edataContext.vitaHmacKey, KEY_SIZE, blockCiphertext, len + KEY_SIZE, vitaHmac);
                         memset(androidHmac, 0, sizeof(androidHmac));
-                        sha256_hmac(edataContext.androidHmacKey, KEY_SIZE, blockCiphertext, ciphertextSize + KEY_SIZE, androidHmac);
+                        sha256_hmac(edataContext.androidHmacKey, KEY_SIZE, blockCiphertext, len + KEY_SIZE, androidHmac);
                     }
 
                     res = create_block_signature(vitaHmac, androidHmac, blockCiphertext, &len);

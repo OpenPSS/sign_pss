@@ -21,7 +21,7 @@
     <ClCompile Include="PsmKeys.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Sony.cpp">
+    <ClCompile Include="HexKey.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="OpenSSL.cpp">
@@ -47,7 +47,7 @@
     <ClInclude Include="psm_encryptor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Sony.hpp">
+    <ClInclude Include="HexKey.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
