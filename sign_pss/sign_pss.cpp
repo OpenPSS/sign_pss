@@ -25,8 +25,8 @@ bool doEncrypt(std::string path) {
 		if (_stricmp(encExtension.c_str(), extension.c_str()) == 0) return true;
 	}
 
-	for (std::string ext : extBlacklist) {
-		if (_stricmp(ext.c_str(), extension.c_str()) == 0) return false;
+	for (std::string blacklistedExt : extBlacklist) {
+		if (_stricmp(blacklistedExt.c_str(), extension.c_str()) == 0) return false;
 	}
 
 	for (std::string blacklistedFile : encryptBlacklist) {
