@@ -3,6 +3,7 @@ typedef struct IUnknown IUnknown;
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 
@@ -12,6 +13,17 @@ typedef struct IUnknown IUnknown;
 
 #include "ScePsmEdata.hpp"
 #include "ScePsmDrm.hpp"
+
+#include "annex_k.hpp"
+
+#ifndef _WIN32
+#include "strings.h"
+#include <byteswap.h>
+
+#define _stricmp strcasecmp
+#define _byteswap_ulong bswap_32
+
+#endif
 
 bool doEncrypt(std::string path) {
 	std::string filename = getFilename(path);
@@ -131,7 +143,7 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 
 	license.unk1 = _byteswap_ulong(1);
 	license.account_id = 0x0123456789ABCDEFLL;
-	strncpy_s(license.content_id, contentId.c_str(), sizeof(license.content_id));
+	strncpy_s(license.content_id, sizeof(license.content_id), contentId.c_str(), contentId.length());
 
 	// generate keyset
 	RAND_bytes((uint8_t*)&license.keyset, sizeof(ScePsmDrmKeySet));
@@ -152,7 +164,7 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 	
 	char contentIdBytes[0x30];
 	memset(contentIdBytes, 0, sizeof(contentIdBytes));
-	strncpy_s(contentIdBytes, contentId.c_str(), sizeof(contentIdBytes));
+	strncpy_s(contentIdBytes, sizeof(contentIdBytes), contentId.c_str(), contentId.length());
 
 	std::fstream contentIdFile(systemFolder + "/content_id", std::ios::out | std::ios::trunc | std::ios::binary);
 	contentIdFile.write(contentIdBytes, sizeof(contentIdBytes));

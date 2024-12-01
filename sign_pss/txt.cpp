@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include <cstdio>
 
-void hex2bin(unsigned char* v, unsigned char* s, size_t n) {
+void hex2bin(unsigned char* v, unsigned char* s, std::size_t n) {
 	int i;
 	char _t[3];
 	unsigned char* p = s;
@@ -21,7 +21,7 @@ void hex2bin(unsigned char* v, unsigned char* s, size_t n) {
 	}
 }
 
-void printBuffer(const char* header, unsigned char* buffer, size_t bufferLen) {
+void printBuffer(const char* header, unsigned char* buffer, std::size_t bufferLen) {
 	printf("%s", header);
 	for (int i = 0; i < bufferLen; i++) printf("%02X", buffer[i]);
 	printf("\n");

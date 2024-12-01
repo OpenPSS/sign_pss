@@ -1,6 +1,6 @@
 # sign_pss
 
-Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI10011) 
+Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI00011) 
 
 this can *technically* even be used to run PSM homebrew on offical firmware 3.74. 
 however doing so would require (any) valid PSM license, (you would just sign an app with the same keys & contentid as an offical app)

@@ -59,7 +59,49 @@ void closeDirectory(void* dfd) {
 	delete handle;
 }
 #else
-// TODO: implement linux
+
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <cstring>
+
+void createDirectory(std::string path) {
+	mkdir(path.c_str(), 0777);
+}
+
+void* openDirectory(std::string path) {
+	return opendir(path.c_str());
+}
+
+bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
+	DIR* handle = (DIR*)dfd;
+	if (handle == nullptr) return false;
+
+	struct dirent * entry = readdir(handle);
+	if (entry == nullptr)
+	{
+		return false;
+	}
+
+	struct stat stbuf;
+	stat(entry->d_name, &stbuf);
+	*isDirectory = S_ISDIR(stbuf.st_mode);
+
+	outputFilename = std::string(entry->d_name, strlen(entry->d_name));
+
+	return true;
+}
+
+void closeDirectory(void* dfd) {
+	DIR* handle = (DIR*)dfd;
+
+	if (handle == nullptr) return;
+
+	closedir(handle);
+
+}
+
+#include "annex_k.hpp"
 #endif
 
 
@@ -73,7 +115,7 @@ void copyFile(std::string src, std::string dst) {
 	fopen_s(&fd, src.c_str(), "rb");
 	fopen_s(&wfd, dst.c_str(), "wb");
 
-	size_t rd = 0;
+	std::size_t rd = 0;
 
 	do {
 		rd = fread(buffer, 1, sizeof(buffer), fd);

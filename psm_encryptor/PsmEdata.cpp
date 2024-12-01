@@ -9,6 +9,7 @@
 #include <cstdint>
 #include <cstring>
 
+#include "annex_k.hpp"
 
 static char G_CONTENTID[PSM_CONTENT_ID_SIZE] = { 0 };
 static uint8_t G_PLAINTEXT_IV[KEY_SIZE] = { 0 };
@@ -35,7 +36,7 @@ ScePsmEdataStatus get_content_id(char* contentId) {
     return SCE_OK;
 }
 
-ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devPkcs12Size, const PsmHkapp* hostKdbg, size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key) {
+ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devPkcs12Size, const PsmHkapp* hostKdbg, std::size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key) {
     if (!devPkcs12)
         return SCE_PSM_EDATA_ERROR_INVAL;
     if (!hostKdbg)
@@ -83,7 +84,7 @@ ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devP
 
                     // get filename hmac key
                     memset(filename_hmac_key, 0, KEY_SIZE);
-                    size_t hmac_sz = strlen(SCE_PSM_HMAC_KEY) + 1;
+                    std::size_t hmac_sz = strlen(SCE_PSM_HMAC_KEY) + 1;
                     if (hmac_sz == ASCII_KEY_SIZE)
                         hex2bin(SCE_PSM_HMAC_KEY, KEY_SIZE, filename_hmac_key);
                     else
@@ -135,7 +136,7 @@ ScePsmEdataStatus get_psse_header_keys(uint8_t* header_key, uint8_t* header_iv) 
 
     memset(header_key, 0, KEY_SIZE);
 
-    size_t headerKeySz = strlen(SCE_PSM_FIXED_KEY) + 1;
+    std::size_t headerKeySz = strlen(SCE_PSM_FIXED_KEY) + 1;
     if (headerKeySz == ASCII_KEY_SIZE)
         hex2bin(SCE_PSM_FIXED_KEY, KEY_SIZE, header_key);
     else
@@ -143,7 +144,7 @@ ScePsmEdataStatus get_psse_header_keys(uint8_t* header_key, uint8_t* header_iv) 
 
     memset(header_iv, 0, KEY_SIZE);
 
-    size_t headerIvSz = strlen(SCE_PSM_FIXED_IV) + 1;
+    std::size_t headerIvSz = strlen(SCE_PSM_FIXED_IV) + 1;
     if (headerIvSz == ASCII_KEY_SIZE)
         hex2bin(SCE_PSM_FIXED_IV, KEY_SIZE, header_iv);
     else
@@ -192,7 +193,7 @@ ScePsmEdataStatus setup_psse_header(PsmEdataCtx edataContext, psse_header* psseH
     uint8_t md5Out[MD5_SIZE];
 
     const uint8_t* der;
-    size_t len;
+    std::size_t len;
 
     // check filesize of the file
     uint64_t inputFileSize = 0;
@@ -252,9 +253,9 @@ ScePsmEdataStatus get_global_psse_header(psse_header* psseHeader, int* toRead)
     return SCE_OK;
 }
 
-size_t write_psse_header_to_disk()
+std::size_t write_psse_header_to_disk()
 {
-    size_t result = fwrite(&G_PSSE_HEADER, 1, sizeof(psse_header), G_CIPHERTEXT_EDATA_FILE_FD);
+    std::size_t result = fwrite(&G_PSSE_HEADER, 1, sizeof(psse_header), G_CIPHERTEXT_EDATA_FILE_FD);
     G_CIPHERTEXT_EDATA_FILE_OFFSET += result;
     return result;
 }
@@ -335,7 +336,7 @@ ScePsmEdataStatus create_block_signature(uint8_t* vitaHmac, uint8_t* androidHmac
 ScePsmEdataStatus write_whole_file_signature_and_hmac() {
 
     const uint8_t* der;
-    size_t len = 0xDEADBEEF;
+    std::size_t len = 0xDEADBEEF;
 
     if (G_EDATA_TYPE != ReadonlyWholeSignature && G_NEED_SIGNATURE_BLOCK)
     {

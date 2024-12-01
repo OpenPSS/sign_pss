@@ -60,7 +60,7 @@ typedef enum ScePsmEdataStatus
 } ScePsmEdataStatus;
 
 ScePsmEdataStatus scePsmEdataEncryptForRetail(const char* infile, const char* outfile, const char* installPath, ScePsmEdataType type, const char* contentId, const unsigned char* gameKey, const unsigned char* vitaHmacKey, const unsigned char* androidHmacKey);
-ScePsmEdataStatus scePsmEdataEncrypt(const char* infile, const char* outfile, const char* installPath, ScePsmEdataType type, uint8_t* devPkcs12, size_t devPkcs12Size, uint8_t* hostKdbg, size_t hostKdbgSize);
+ScePsmEdataStatus scePsmEdataEncrypt(const char* infile, const char* outfile, const char* installPath, ScePsmEdataType type, uint8_t* devPkcs12, std::size_t devPkcs12Size, uint8_t* hostKdbg, std::size_t hostKdbgSize);
 ScePsmEdataStatus scePsmGetVersion(char* buildVersion, char* buildDate);
 
 #ifdef __cplusplus

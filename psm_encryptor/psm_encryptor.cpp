@@ -10,6 +10,7 @@
 #include "PsmKeys.hpp"
 #include "psm_encryptor.hpp"
 #include "HexKey.hpp"
+#include "annex_k.hpp"
 
 
 #ifdef _PSM_SIGNTOOL_BUILD 
@@ -87,7 +88,7 @@ ScePsmEdataStatus scePsmEdataEncryptForRetail(const char* infile, const char* ou
 
 #endif
 
-ScePsmEdataStatus  scePsmEdataEncrypt(const char* infile, const char* outfile, const char* installPath, ScePsmEdataType type, uint8_t* devPkcs12, size_t devPkcs12Size, PsmHkapp* hostKdbg, size_t hostKdbgSize) {
+ScePsmEdataStatus  scePsmEdataEncrypt(const char* infile, const char* outfile, const char* installPath, ScePsmEdataType type, uint8_t* devPkcs12, std::size_t devPkcs12Size, PsmHkapp* hostKdbg, std::size_t hostKdbgSize) {
     char contentId[PSM_CONTENT_ID_SIZE];
     char installPathLowercase[0x400];
     

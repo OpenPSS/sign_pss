@@ -3,12 +3,20 @@
 #include "PsmEdata.hpp"
 #include "OpenSSL.hpp"
 
+#include "openssl/hmac.h"
+
+#include "annex_k.hpp"
+
+#ifdef _WIN32
+
 #define stdin  (__acrt_iob_func(0))
 #define stdout (__acrt_iob_func(1))
 #define stderr (__acrt_iob_func(2))
 
 FILE _iob[] = { *stdin, *stdout, *stderr };
 extern "C" FILE* __cdecl __iob_func(void) { return _iob; }
+
+#endif /* _WIN32 */
 
 ScePsmEdataStatus sha256_hmac(const uint8_t* key, int key_size, const uint8_t* data, int data_len, uint8_t* sha_out) {
     HMAC_CTX hmacSha;
@@ -37,7 +45,7 @@ ScePsmEdataStatus md5_file(const char* filename, uint8_t* digest) {
     fseek(mdFd, 0, SEEK_SET);
 
     do {
-        size_t rd = fread(buffer, 1, sizeof(buffer), mdFd);
+        std::size_t rd = fread(buffer, 1, sizeof(buffer), mdFd);
         MD5_Update(&md5Ctx, buffer, rd);
         totalSz -= rd;
     } while (totalSz > 0);
@@ -48,7 +56,7 @@ ScePsmEdataStatus md5_file(const char* filename, uint8_t* digest) {
     return SCE_OK;
 }
 
-ScePsmEdataStatus aes_cbc_encrypt(const uint8_t* key, size_t key_size, const uint8_t* iv, size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output)
+ScePsmEdataStatus aes_cbc_encrypt(const uint8_t* key, std::size_t key_size, const uint8_t* iv, std::size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output)
 {
     if (!key)
         return SCE_PSM_EDATA_ERROR_INVAL;
@@ -67,7 +75,7 @@ ScePsmEdataStatus aes_cbc_encrypt(const uint8_t* key, size_t key_size, const uin
     return SCE_OK;
 }
 
-ScePsmEdataStatus aes_cbc_decrypt(const uint8_t* key, size_t key_size, const uint8_t* iv, size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output)
+ScePsmEdataStatus aes_cbc_decrypt(const uint8_t* key, std::size_t key_size, const uint8_t* iv, std::size_t iv_size, const uint8_t* in_data, int data_size, uint8_t* output)
 {
     if (!key)
         return SCE_PSM_EDATA_ERROR_INVAL;
