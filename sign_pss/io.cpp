@@ -31,22 +31,19 @@ void* openDirectory(std::string path) {
 
 bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
 	directoryHandle* handle = (directoryHandle*)dfd;
+
 	if (handle == NULL) return false;
 	if (handle->handle == NULL) return false;
 
 	outputFilename = std::string(handle->findData.cFileName, strlen(handle->findData.cFileName));
+
 	if (outputFilename.empty()) return false;
+	if(isDirectory != NULL) *isDirectory = (((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) || ((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0));
+	
+	bool res = FindNextFileA(handle->handle, &handle->findData);
+	if (outputFilename == "." || outputFilename == "..") return readDirectory(handle, outputFilename, isDirectory);
 
-	if (outputFilename[0] != '.') {
-		*isDirectory = (((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) || ((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0));
-
-		if (FindNextFileA(handle->handle, &handle->findData) == TRUE) return true;
-		return false;
-	}
-	else {
-		if (FindNextFileA(handle->handle, &handle->findData) == FALSE) return false;
-		return readDirectory(handle, outputFilename, isDirectory);
-	}
+	return res;
 }
 
 void closeDirectory(void* dfd) {
