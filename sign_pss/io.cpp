@@ -129,7 +129,7 @@ void copyFile(std::string src, std::string dst) {
 void createDirectories(const std::string path) {
 	std::string partialPath;
 
-	for (int i = 0; i < path.length(); i++) {
+	for (std::size_t i = 0; i < path.length(); i++) {
 		if (path[i] == '/' || path[i] == '\\') {
 			partialPath = path.substr(0, i);
 			createDirectory(partialPath);

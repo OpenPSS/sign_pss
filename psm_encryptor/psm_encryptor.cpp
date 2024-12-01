@@ -83,6 +83,7 @@ ScePsmEdataStatus scePsmEdataEncryptForRetail(const char* infile, const char* ou
         return do_edata_encryption(edataContext);
     }
 
+    return res;
 }
 
 

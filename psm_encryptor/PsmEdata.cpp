@@ -36,7 +36,7 @@ ScePsmEdataStatus get_content_id(char* contentId) {
     return SCE_OK;
 }
 
-ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devPkcs12Size, const PsmHkapp* hostKdbg, std::size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key) {
+ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, std::size_t devPkcs12Size, const PsmHkapp* hostKdbg, std::size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key) {
     if (!devPkcs12)
         return SCE_PSM_EDATA_ERROR_INVAL;
     if (!hostKdbg)

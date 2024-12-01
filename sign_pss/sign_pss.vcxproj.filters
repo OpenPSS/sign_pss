@@ -44,5 +44,8 @@
     <ClInclude Include="ScePsmDrm.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="annex_k.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
