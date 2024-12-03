@@ -1,6 +1,7 @@
 # sign_pss
 
-Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI00011) 
+
+Tool to sign PlayStation Mobile applications to run under the retail PlayStation Mobile Runtime Package (PCSI00011) & PlayStation Mobile Runtime Package for Unity (PCSI00010)
 
 this can *technically* even be used to run PSM homebrew on offical firmware 3.74. 
 however doing so would require (any) valid PSM license, (you would just sign an app with the same keys & contentid as an offical app)
@@ -29,11 +30,9 @@ android_hmac_key - HMAC key used for verifying psm file integrity on ANDROID, fo
 The application targets Windows XP, so it should work even really far back
 
 TODO: 
-- Determine if PSM Unity uses same public key as psm proper.
 - Create a linux & macos port?
 
 Maybe someday: 
-- x64 version ?
 - GUI frontend ??
 - encrypt & sign only one single file instead of entire gamee? (would be useful for modding games)
 - Read contentid/gamekey/hmackey from existing NoPsmDrm RIF?
