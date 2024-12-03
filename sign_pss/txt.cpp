@@ -2,6 +2,7 @@
 #include <cstdint>
 #include <cstdlib>
 #include <cstdio>
+#include <string>
 
 void hex2bin(unsigned char* v, unsigned char* s, std::size_t n) {
 	int i;
@@ -25,4 +26,14 @@ void printBuffer(const char* header, unsigned char* buffer, std::size_t bufferLe
 	printf("%s", header);
 	for (std::size_t i = 0; i < bufferLen; i++) printf("%02X", buffer[i]);
 	printf("\n");
+}
+
+std::string stripNonAscii(const std::string in) {
+	std::string s = "";
+	for (int i = 0; i < in.length(); i++) {
+		if (in[i] >= 0x20 && in[i] < 0x7f) {
+			s += in[i];
+		}
+	}
+	return s;
 }

@@ -8,7 +8,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sign_pss", "sign_pss\sign_pss.vcxproj", "{162A2A29-1F10-446F-897B-8C5C0EFA0290}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C} = {7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C}
+		{C196D659-BD55-4FBE-96EE-457D800BCA52} = {C196D659-BD55-4FBE-96EE-457D800BCA52}
 	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibCXML", "LibCXML\LibCXML.vcxproj", "{C196D659-BD55-4FBE-96EE-457D800BCA52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -52,6 +55,22 @@ Global
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release|x64.ActiveCfg = Release|x64
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release|x64.Build.0 = Release|x64
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release|x86.ActiveCfg = Release|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.ActiveCfg = Debug_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.Build.0 = Debug_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.ActiveCfg = Debug_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.Build.0 = Debug_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug|x64.ActiveCfg = Debug_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug|x64.Build.0 = Debug_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug|x86.ActiveCfg = Debug_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug|x86.Build.0 = Debug_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.ActiveCfg = Release_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.Build.0 = Release_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.ActiveCfg = Release_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.Build.0 = Release_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release|x64.ActiveCfg = Release_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release|x64.Build.0 = Release_Static|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release|x86.ActiveCfg = Release_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release|x86.Build.0 = Release_Static|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
