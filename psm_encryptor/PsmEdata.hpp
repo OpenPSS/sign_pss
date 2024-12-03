@@ -1,6 +1,7 @@
 #ifndef _PSM_ENCRYPTOR_EDATA
 #define _PSM_ENCRYPTOR_EDATA 1
 #include <cstdint>
+#include <iostream>
 #include "PsmHkapp.hpp"
 
 typedef enum ScePsmEdataType
@@ -104,7 +105,7 @@ const int G_PSM_EDATA_VERSION = 0x1;
 const uint32_t G_PSM_EDATA_TYPES[] { 0x0, 0x1, 0x0, 0x3,0x4, 0x80000001, 0x0, 0x80000003, 0x0, 0x0 };
 
 ScePsmEdataStatus get_content_id(char* contentId);
-ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, unsigned int devPkcs12Size, const PsmHkapp* hostKdbg, size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key);
+ScePsmEdataStatus get_keys_from_kdbg(const uint8_t* devPkcs12, std::size_t devPkcs12Size, const PsmHkapp* hostKdbg, std::size_t hostKdbgSize, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, uint8_t* filename_hmac_key);
 ScePsmEdataStatus get_psse_header_keys(uint8_t* header_key, uint8_t* header_iv);
 ScePsmEdataStatus do_edata_encryption(PsmEdataCtx edataContext);
 

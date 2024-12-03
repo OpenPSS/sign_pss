@@ -31,22 +31,19 @@ void* openDirectory(std::string path) {
 
 bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
 	directoryHandle* handle = (directoryHandle*)dfd;
+
 	if (handle == NULL) return false;
 	if (handle->handle == NULL) return false;
 
 	outputFilename = std::string(handle->findData.cFileName, strlen(handle->findData.cFileName));
+
 	if (outputFilename.empty()) return false;
+	if(isDirectory != NULL) *isDirectory = (((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) || ((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0));
+	
+	bool res = FindNextFileA(handle->handle, &handle->findData);
+	if (outputFilename == "." || outputFilename == "..") return readDirectory(handle, outputFilename, isDirectory);
 
-	if (outputFilename[0] != '.') {
-		*isDirectory = (((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) || ((handle->findData.dwFileAttributes & FILE_ATTRIBUTE_REPARSE_POINT) != 0));
-
-		if (FindNextFileA(handle->handle, &handle->findData) == TRUE) return true;
-		return false;
-	}
-	else {
-		if (FindNextFileA(handle->handle, &handle->findData) == FALSE) return false;
-		return readDirectory(handle, outputFilename, isDirectory);
-	}
+	return res;
 }
 
 void closeDirectory(void* dfd) {
@@ -59,7 +56,49 @@ void closeDirectory(void* dfd) {
 	delete handle;
 }
 #else
-// TODO: implement linux
+
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <cstring>
+
+void createDirectory(std::string path) {
+	mkdir(path.c_str(), 0777);
+}
+
+void* openDirectory(std::string path) {
+	return opendir(path.c_str());
+}
+
+bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
+	DIR* handle = (DIR*)dfd;
+	if (handle == nullptr) return false;
+
+	struct dirent * entry = readdir(handle);
+	if (entry == nullptr)
+	{
+		return false;
+	}
+
+	struct stat stbuf;
+	stat(entry->d_name, &stbuf);
+	*isDirectory = S_ISDIR(stbuf.st_mode);
+
+	outputFilename = std::string(entry->d_name, strlen(entry->d_name));
+
+	return true;
+}
+
+void closeDirectory(void* dfd) {
+	DIR* handle = (DIR*)dfd;
+
+	if (handle == nullptr) return;
+
+	closedir(handle);
+
+}
+
+#include "annex_k.hpp"
 #endif
 
 
@@ -73,7 +112,7 @@ void copyFile(std::string src, std::string dst) {
 	fopen_s(&fd, src.c_str(), "rb");
 	fopen_s(&wfd, dst.c_str(), "wb");
 
-	size_t rd = 0;
+	std::size_t rd = 0;
 
 	do {
 		rd = fread(buffer, 1, sizeof(buffer), fd);
@@ -87,7 +126,7 @@ void copyFile(std::string src, std::string dst) {
 void createDirectories(const std::string path) {
 	std::string partialPath;
 
-	for (int i = 0; i < path.length(); i++) {
+	for (std::size_t i = 0; i < path.length(); i++) {
 		if (path[i] == '/' || path[i] == '\\') {
 			partialPath = path.substr(0, i);
 			createDirectory(partialPath);

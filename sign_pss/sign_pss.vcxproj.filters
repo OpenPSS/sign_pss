@@ -27,11 +27,14 @@
     <ClCompile Include="txt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScePsmDrm.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="appinfo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="ScePsmEdata.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="io.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -42,6 +45,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScePsmDrm.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="annex_k.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="appinfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScePsmEdata.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

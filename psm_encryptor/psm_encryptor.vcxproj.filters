@@ -50,5 +50,11 @@
     <ClInclude Include="HexKey.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="annex_k.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="meson.build" />
   </ItemGroup>
 </Project>

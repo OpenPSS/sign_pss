@@ -271,26 +271,26 @@ const uint8_t SCE_PSM_WHOLE_SIGNATURE_PRIV_KEY[] = {
   0x90, 0x0d, 0xa6, 0xa9
 };
 
-int get_edata_header_private_key(const uint8_t** der_key, size_t* der_len) {
+int get_edata_header_private_key(const uint8_t** der_key, std::size_t* der_len) {
 	*der_key = SCE_PSM_HEADER_SIGNATURE_PRIV_KEY;
 	*der_len = sizeof(SCE_PSM_HEADER_SIGNATURE_PRIV_KEY);
 
 	return 0;
 }
-int get_edata_whole_file_private_key(const uint8_t** der_key, size_t* der_len) {
+int get_edata_whole_file_private_key(const uint8_t** der_key, std::size_t* der_len) {
 	*der_key = SCE_PSM_WHOLE_SIGNATURE_PRIV_KEY;
 	*der_len = sizeof(SCE_PSM_WHOLE_SIGNATURE_PRIV_KEY);
 
 	return 0;
 }
 
-int get_edata_header_public_key(const uint8_t** der_key, size_t* der_len) {
+int get_edata_header_public_key(const uint8_t** der_key, std::size_t* der_len) {
 	*der_key = SCE_PSM_HEADER_SIGNATURE_PUB_KEY;
 	*der_len = sizeof(SCE_PSM_HEADER_SIGNATURE_PUB_KEY);
 
 	return 0;
 }
-int get_edata_whole_file_public_key(const uint8_t** der_key, size_t* der_len) {
+int get_edata_whole_file_public_key(const uint8_t** der_key, std::size_t* der_len) {
 	*der_key = SCE_PSM_WHOLE_SIGNATURE_PUB_KEY;
 	*der_len = sizeof(SCE_PSM_WHOLE_SIGNATURE_PUB_KEY);
 

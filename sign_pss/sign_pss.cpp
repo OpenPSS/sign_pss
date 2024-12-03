@@ -1,45 +1,60 @@
 typedef struct IUnknown IUnknown;
 #include <openssl/rand.h>
+#include "ScePsmDrm.hpp"
+#include "ScePsmEdata.hpp"
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <fstream>
 #include <iostream>
 
 #include "io.hpp"
 #include "path.hpp"
 #include "txt.hpp"
+#include "annex_k.hpp"
+#include "appinfo.hpp"
 
-#include "ScePsmEdata.hpp"
-#include "ScePsmDrm.hpp"
+#ifndef _WIN32
+#include "strings.h"
+#define _stricmp strcasecmp
+#endif
 
-bool doEncrypt(std::string path) {
+bool doEncrypt(std::string path, bool unity) {
 	std::string filename = getFilename(path);
 	std::string extension = getExtension(path);
 
-	std::string mustEncryptExt[]{ ".exe", ".cgx", ".dll" };
-	std::string encryptBlacklist[]{ "edata.list", "app.info", "app.cfg", "psse.list" };
-	std::string extBlacklist[]{ ".mdb" };
+	std::string extAllowlist[]{ ".exe", ".cgx", ".dll" };
+	std::string filenameAllowlist[]{ "unity_builtin_extra" };
 
-	for (std::string encExtension : mustEncryptExt) {
+	std::string filenameDenylist[]{ "edata.list", "app.info", "app.cfg", "psse.list" };
+	std::string extDenylist[]{ ".mdb" };
+
+	for (std::string encExtension : extAllowlist) {
 		if (_stricmp(encExtension.c_str(), extension.c_str()) == 0) return true;
 	}
 
-	for (std::string blacklistedExt : extBlacklist) {
+	if (unity) { // only encrypt untiy_builtin_extra if its a unity game
+		for (std::string encWhitelist : filenameAllowlist) {
+			if (_stricmp(encWhitelist.c_str(), filename.c_str()) == 0) return true;
+		}
+	}
+
+	for (std::string blacklistedExt : extDenylist) {
 		if (_stricmp(blacklistedExt.c_str(), extension.c_str()) == 0) return false;
 	}
 
-	for (std::string blacklistedFile : encryptBlacklist) {
+	for (std::string blacklistedFile : filenameDenylist) {
 		if (_stricmp(blacklistedFile.c_str(), filename.c_str()) == 0) return false;
 	}
 
 
-	return true;
+	return !unity;
 }
 
 
 int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::string installFolder, std::vector<std::string>& files,
-	std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey) {
+	std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey, bool unity) {
 
 	createDirectories(dstFolder.c_str());
 
@@ -60,7 +75,7 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 
 
 		if (!isDirectory) {
-			if (doEncrypt(srcInPath)) {
+			if (doEncrypt(srcInPath, unity)) {
 				files.push_back(installPath);
 				std::cout << "Signing ... " << installPath << std::endl;
 				if (scePsmEdataEncryptForRetail(srcInPath.c_str(), destOutPath.c_str(), installPath.c_str(), ReadonlyIcvAndCrypto, contentId.c_str(), gameKey, vitaHmacKey, androidHmacKey) != SCE_OK) return false;
@@ -71,7 +86,7 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 			}
 		}
 		else {
-			recursiveEncryptOrCopy(srcInPath, destOutPath, installPath, files, contentId, gameKey, vitaHmacKey, androidHmacKey);
+			recursiveEncryptOrCopy(srcInPath, destOutPath, installPath, files, contentId, gameKey, vitaHmacKey, androidHmacKey, unity);
 		}
 
 
@@ -81,18 +96,49 @@ int recursiveEncryptOrCopy(std::string srcFolder, std::string dstFolder, std::st
 	return true;
 }
 
+bool createContentIdFile(std::string systemFolder, std::string contentId) {
+	char contentIdBytes[0x30];
+	memset(contentIdBytes, 0, sizeof(contentIdBytes));
+	strncpy_s(contentIdBytes, sizeof(contentIdBytes), contentId.c_str(), contentId.length());
+
+	std::fstream contentIdFile(systemFolder + "/content_id", std::ios::out | std::ios::trunc | std::ios::binary);
+	contentIdFile.write(contentIdBytes, sizeof(contentIdBytes));
+	contentIdFile.close();
+
+	return true;
+}
+
 bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey) {
-
-	if (!fileExist(inDir + "/Application/app.info")) {
-		std::cout << "/Application/app.info could not be found within " << inDir << std::endl;
-		std::cout << "please make sure the input folder is the one containing /Application/app.info." << std::endl;
-		return false;
-	}
-
 	std::string appPrefix = "/Application";
 	std::string licensePrefix = "/License";
 	std::string systemPrefix = "/System";
 
+	std::string appInfoFile = inDir + appPrefix + "/app.info";
+
+	if (!fileExist(appInfoFile)) {
+		std::cerr << appInfoFile << " could not be found.." << std::endl;
+		std::cerr << "please make sure the input folder is the one containing /Application/app.info." << std::endl;
+		return false;
+	}
+
+	AppInfo applicationInfo = AppInfo(appInfoFile);
+	
+	if (!applicationInfo.Validate()) {
+		std::cerr << "The application may have issues promoting on PSVita, please check your app.info is correct!" << std::endl;
+	}
+	else {
+		std::cout << "app.info read successfully;" << std::endl;
+
+		std::cout << std::endl;
+		std::cout << "\tPSM version:  " << stripNonAscii(applicationInfo.TargetRuntimeVersion) << std::endl;
+		std::cout << "\tProject name: " << stripNonAscii(applicationInfo.ProjectName) << std::endl;
+		std::cout << "\tName:         " << stripNonAscii(applicationInfo.Names.at(0).Name) << std::endl;
+		std::cout << "\tShort name:   " << stripNonAscii(applicationInfo.ShortNames.at(0).Name) << std::endl;
+		std::cout << "\tAuthor:       " << stripNonAscii(applicationInfo.Author) << std::endl;
+		std::cout << "\tWebsite:      " << stripNonAscii(applicationInfo.Website) << std::endl;
+		std::cout << "\tIs Unity:     " << (applicationInfo.IsPsmUnity() ? "YES" : "NO") << std::endl;
+		std::cout << std::endl;
+	}
 
 	std::string inAppFolder = inDir + appPrefix;
 	std::string applicationFolder = outDir + "/RO"+ appPrefix;
@@ -103,15 +149,12 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 	createDirectories(licenseFolder);
 	createDirectories(systemFolder);
 
-	std::vector<std::string> edataList;
-	
+	std::vector<std::string> edataList;	
 	std::cout << "Signing files ... " << std::endl;
 
-	if(!recursiveEncryptOrCopy(inAppFolder, applicationFolder, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
+	if(!recursiveEncryptOrCopy(inAppFolder, applicationFolder, appPrefix, edataList, contentId, gameKey, vitaHmacKey, androidHmacKey, applicationInfo.IsPsmUnity())) return false;
 
-	std::cout << "Creating edata.list & psse.list" << std::endl;
-
-	// create edata.list & psse.list
+	std::cout << "Writing ... /Application/edata.list" << std::endl;
 	std::ofstream psseStream(applicationFolder + "/edata.list", std::ios::out | std::ios::trunc);
 	for (std::string edataFile : edataList) {
 		std::string line = edataFile.substr(appPrefix.length() + 1);
@@ -121,42 +164,24 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 	}
 	psseStream.close();
 
+	std::cout << "Signing ... /Application/edata.list -> /Application/psse.list" << std::endl;
 	if (scePsmEdataEncryptForRetail(std::string(applicationFolder + "/edata.list").c_str(), std::string(applicationFolder + "/psse.list").c_str(), "/Application/psse.list", ReadonlyIcvAndCrypto, contentId.c_str(), gameKey, vitaHmacKey, androidHmacKey) != SCE_OK) return false;
 
-	std::cout << "Creating fake licenses" << std::endl;
+	if (!CreateFakeLicense(licenseFolder, contentId, gameKey, vitaHmacKey, androidHmacKey)) return false;
 
-	// create psmdrm license
-	ScePsmDrmLicense license;
-	memset(&license, 0, sizeof(ScePsmDrmLicense));
+	std::cout << "Writing ... /System/content_id" << std::endl;
+	if (!createContentIdFile(systemFolder, contentId)) return false;
 
-	license.unk1 = _byteswap_ulong(1);
-	license.account_id = 0x0123456789ABCDEFLL;
-	strncpy_s(license.content_id, contentId.c_str(), sizeof(license.content_id));
+	if (applicationInfo.IsPsmUnity()) {
+		std::cout << std::endl;
 
-	// generate keyset
-	RAND_bytes((uint8_t*)&license.keyset, sizeof(ScePsmDrmKeySet));
-	memcpy(license.keyset.hmac_key, vitaHmacKey, 0x10);
-	memcpy(license.keyset.key, gameKey, 0x10);
+		std::cout << "NOTE: you will need to copy the \"PlayStation(r)Mobile Runtime Package for Unity\" v\"" << stripNonAscii(applicationInfo.UnityApplicationVer) << "\" (PCSI00010)" << std::endl;
+		std::cout << "into the \"" << outDir << "/runtime\" folder of this signed PSM Application!" << std::endl;
+		std::cout << "(you can find it within offical retail games)" << std::endl;
 
-	// write licenses to license folder ...
-	std::fstream fakeRifVita(licenseFolder + "/FAKE.RIF", std::ios::out | std::ios::trunc | std::ios::binary);
-	fakeRifVita.write((char*)&license, sizeof(ScePsmDrmLicense));
-	fakeRifVita.close();
+		std::cout << std::endl;
 
-	memcpy(license.keyset.hmac_key, androidHmacKey, 0x10);
-	std::fstream fakeRifAndroid(licenseFolder + "/FAKE.RIF_ANDROID", std::ios::out | std::ios::trunc | std::ios::binary);
-	fakeRifAndroid.write((char*)&license, sizeof(ScePsmDrmLicense));
-	fakeRifAndroid.close();
-
-	std::cout << "Creating content_id file" << std::endl;
-	
-	char contentIdBytes[0x30];
-	memset(contentIdBytes, 0, sizeof(contentIdBytes));
-	strncpy_s(contentIdBytes, contentId.c_str(), sizeof(contentIdBytes));
-
-	std::fstream contentIdFile(systemFolder + "/content_id", std::ios::out | std::ios::trunc | std::ios::binary);
-	contentIdFile.write(contentIdBytes, sizeof(contentIdBytes));
-	contentIdFile.close();
+	}
 
 
 	return true;
@@ -174,7 +199,7 @@ int main(int argc, char** argv)
 		std::cout << "Usage: " << exeName << " <game_folder> <output_folder> <content_id> [game_key] [vita_hmac_key] [android_hmac_key]" << std::endl;
 		std::cout << std::endl;
 		std::cout << "game_folder - the folder containing the plaintext PSM game files (/Application, /System, etc)" << std::endl;
-		std::cout << "content_id - the content id to use for PSSE signature, eg; UM0000-NPNA99999_00-0000000000000000" << std::endl;
+		std::cout << "content_id - the content id to use for PSSE signature, eg; UM0999-NPNA99999_00-0000000000000000" << std::endl;
 		std::cout << "game_key - game specific key used to encrypt the data, found in RIF" << std::endl;
 		std::cout << "vita_hmac_key - HMAC key used for verifying psm file integrity on VITA, found in vita psm RIF" << std::endl;
 		std::cout << "android_hmac_key - HMAC key used for verifying psm file integrity on ANDROID, found in android psm RIF" << std::endl;
@@ -183,6 +208,10 @@ int main(int argc, char** argv)
 		std::cout << "also; a NoPsmDrm FAKE.RIF will be generated for the content_id specified." << std::endl;
 		return -1;
 	}
+
+	std::cout << std::endl;
+	std::cout << std::endl;
+	std::cout << std::endl;
 
 	std::string appFolder = std::string(argv[1]);
 	std::string signedAppFolder = std::string(argv[2]);

@@ -2,6 +2,7 @@
 #define _PSMDRM_H 1
 
 #include <cstdint>
+#include <string>
 
 typedef struct ScePsmDrmKeySet {
 	uint8_t hmac_key[0x20];
@@ -24,5 +25,7 @@ typedef struct ScePsmDrmLicense {
 	ScePsmDrmKeySet keyset;
 	uint8_t rsa_signature[0x100];
 } ScePsmDrmLicense;
+
+bool CreateFakeLicense(std::string licenseFolder, std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey);
 
 #endif
