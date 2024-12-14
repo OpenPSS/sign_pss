@@ -2,13 +2,13 @@ project('psm_encryptor', 'cpp',
   version : '0.1',
   default_options : ['warning_level=3', 'cpp_std=c++14'],)
 
-inc = include_directories('include')
 
 cpp = meson.get_compiler('cpp')
 
-#libdir = meson.current_source_dir() + 'lib/unix'
+dirbase = meson.current_source_dir()
 
-libdir = '/home/flunitrazepam/REPOS/sign_pss/psm_encryptor/lib/unix'
+libdir = join_paths(dirbase, '../lib/unix')
+inc = include_directories('../include')
 
 libcrypto_dep = cpp.find_library('libcrypto', dirs : libdir, static: true)
 libssl_dep = cpp.find_library('libssl', dirs : libdir, static: true)

@@ -4,8 +4,10 @@ project('sign_pss', 'cpp',
 
 cpp = meson.get_compiler('cpp')
 
-libdir = '/home/flunitrazepam/REPOS/sign_pss/psm_encryptor/builddir/'
-libdir2 = '/home/flunitrazepam/REPOS/sign_pss/psm_encryptor/lib/unix'
+dirbase = meson.current_source_dir()
+
+libdir = join_paths(dirbase, 'psm_encryptor/builddir/')
+libdir2 = join_paths(dirbase, 'lib/unix')
 
 libcrypto_dep = cpp.find_library('libcrypto', dirs : libdir2, static: true)
 libssl_dep = cpp.find_library('libssl', dirs : libdir2, static: true)
