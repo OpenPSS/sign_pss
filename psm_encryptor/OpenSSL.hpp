@@ -15,14 +15,14 @@ ScePsmEdataStatus sha256_hmac(const uint8_t* key, int key_size, const uint8_t* d
 
 extern "C" {
 typedef struct IUnknown IUnknown;
-#include "openssl/ssl.h"
-#include "openssl/pkcs12.h"
-#include "openssl/x509.h"
-#include "openssl/aes.h"
-#include "openssl/md5.h"
-#include "openssl/sha.h"
-#include "openssl/err.h"
-#include "openssl/hmac.h"
+#include <openssl/ssl.h>
+#include <openssl/pkcs12.h>
+#include <openssl/x509.h>
+#include <openssl/aes.h>
+#include <openssl/md5.h>
+#include <openssl/sha.h>
+#include <openssl/err.h>
+#include <openssl/hmac.h>
 }
 
 #endif

@@ -41,7 +41,7 @@ ScePsmEdataStatus scePsmEdataEncryptForRetail(const char* infile, const char* ou
     if (!infile || !outfile || !installPath)
         return SCE_PSM_EDATA_ERROR_INVAL;
 
-    if (!contentId, !gameKey, !vitaHmacKey, !androidHmacKey)
+    if (!contentId || !gameKey || !vitaHmacKey || !androidHmacKey)
         return SCE_PSM_EDATA_ERROR_INVAL;
 
     ScePsmEdataStatus res = get_psse_header_keys(psseHeaderKey, psseHeaderIv);

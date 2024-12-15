@@ -75,17 +75,13 @@ bool readDirectory(void* dfd, std::string& outputFilename, bool* isDirectory) {
 	if (handle == nullptr) return false;
 
 	struct dirent * entry = readdir(handle);
-	if (entry == nullptr)
-	{
-		return false;
-	}
+	if (entry == nullptr) return false;
 
-	struct stat stbuf;
-	stat(entry->d_name, &stbuf);
-	*isDirectory = S_ISDIR(stbuf.st_mode);
-
+	*isDirectory = (entry->d_type == DT_DIR);
+	
 	outputFilename = std::string(entry->d_name, strlen(entry->d_name));
-
+	if (outputFilename == "." || outputFilename == "..") return readDirectory(handle, outputFilename, isDirectory);
+	
 	return true;
 }
 

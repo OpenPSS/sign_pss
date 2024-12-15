@@ -1,5 +1,3 @@
-typedef struct IUnknown IUnknown;
-#include <openssl/rand.h>
 #include "ScePsmDrm.hpp"
 #include "ScePsmEdata.hpp"
 

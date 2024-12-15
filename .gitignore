@@ -1,12 +1,18 @@
-openssl/*
+
 psm_encryptor/.vs/*
 psm_encryptor/build/*
 psm_encryptor/build-inter/*
 psm_encryptor/builddir/*
 
+sign_pss/.vs/*
 sign_pss/build/*
 sign_pss/build-inter/*
 sign_pss/builddir/*
+
+LibCXML/.vs/*
+LibCXML/build/*
+LibCXML/build-inter/*
+LibCXML/builddir/*
 
 build/*
 build-inter/*

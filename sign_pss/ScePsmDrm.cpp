@@ -1,5 +1,3 @@
-typedef struct IUnknown IUnknown;
-#include <openssl/rand.h>
 #include <cstring>
 #include <string>
 #include <fstream>

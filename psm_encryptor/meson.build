@@ -8,11 +8,10 @@ cpp = meson.get_compiler('cpp')
 dirbase = meson.current_source_dir()
 
 libdir = join_paths(dirbase, '../lib/unix')
-inc = include_directories('../include')
+inc = include_directories('../include/unix')
 
 libcrypto_dep = cpp.find_library('libcrypto', dirs : libdir, static: true)
 libssl_dep = cpp.find_library('libssl', dirs : libdir, static: true)
-libdl_dep = cpp.find_library('dl')
 
 static_library('psm_encryptor',
         'HexKey.cpp',
@@ -24,7 +23,6 @@ static_library('psm_encryptor',
         install : true,
         dependencies : [
           libcrypto_dep,
-          libssl_dep,
-          libdl_dep
+          libssl_dep
         ],
         cpp_args : '-D_PSM_SIGNTOOL_BUILD')

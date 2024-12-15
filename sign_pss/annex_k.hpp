@@ -14,7 +14,7 @@
 static inline void strncpy_s(char *strDest, std::size_t numberOfElements, const char *strSource, std::size_t count)
 {
     std::size_t min_len = MIN(numberOfElements, count);
-    strlcpy(strDest, strSource, min_len);
+    strncpy(strDest, strSource, min_len);
 }
 
 static inline void memcpy_s(void *dest, std::size_t destsz, const void *src, std::size_t count)
