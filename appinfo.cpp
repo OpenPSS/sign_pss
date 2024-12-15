@@ -4,7 +4,7 @@
 
 #include <string>
 #include <iostream>
-#include "subprojects/LibCXML/LibCXML.hpp"
+#include <LibCXML/LibCXML.hpp>
 
 
 bool AppInfo::nextElement() {
