@@ -5,6 +5,7 @@ project('sign_pss', 'cpp',
 cpp = meson.get_compiler('cpp')
 
 dirbase = meson.current_source_dir()
+inc = include_directories('include')
 
 libCXML_proj = subproject('LibCXML')
 libCXML_dep = libCXML_proj.get_variable('libCXML_dep')
@@ -19,6 +20,7 @@ executable('sign_pss',
 		   'sign_pss.cpp',
 		   'ScePsmDrm.cpp',
 		   'txt.cpp',
+		   include_directories : inc,
 			dependencies : [
 			  libpsm_encryptor_dep,
 			  libCXML_dep
