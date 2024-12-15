@@ -6,10 +6,12 @@ project('CXML', 'cpp',
 cpp = meson.get_compiler('cpp')
 dirbase = meson.current_source_dir()
 
-static_library('CXML',
+libCXML = static_library('CXML',
         'CXMLAttribute.cpp',
         'CXMLAttributeBase.cpp',
         'CXMLElement.cpp',
         'CXMLReader.cpp',
         'CXMLStream.cpp',
         install : true)
+		
+libCXML_dep = declare_dependency(include_directories: '.', link_with: libCXML)

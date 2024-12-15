@@ -1,3 +1,4 @@
+#include "rng.h"
 #include <cstring>
 #include <string>
 #include <fstream>

@@ -1,5 +1,6 @@
 #include "ScePsmDrm.hpp"
 #include "ScePsmEdata.hpp"
+#include "rng.h"
 
 #include <vector>
 #include <string>

@@ -3,15 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35013.160
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psm_encryptor", "psm_encryptor\psm_encryptor.vcxproj", "{7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psm_encryptor", "subprojects\psm_encryptor\psm_encryptor.vcxproj", "{7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sign_pss", "sign_pss\sign_pss.vcxproj", "{162A2A29-1F10-446F-897B-8C5C0EFA0290}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sign_pss", "sign_pss.vcxproj", "{162A2A29-1F10-446F-897B-8C5C0EFA0290}"
 	ProjectSection(ProjectDependencies) = postProject
 		{7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C} = {7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C}
 		{C196D659-BD55-4FBE-96EE-457D800BCA52} = {C196D659-BD55-4FBE-96EE-457D800BCA52}
 	EndProjectSection
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibCXML", "LibCXML\LibCXML.vcxproj", "{C196D659-BD55-4FBE-96EE-457D800BCA52}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LibCXML", "subprojects\LibCXML\LibCXML.vcxproj", "{C196D659-BD55-4FBE-96EE-457D800BCA52}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
