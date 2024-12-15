@@ -1,6 +1,3 @@
-[submodule "psm_encryptor"]
-	path = psm_encryptor
-	url = https://github.com/OpenPSS/psm_encryptor.git
 [submodule "subprojects/LibCXML"]
 	path = subprojects/LibCXML
 	url = https://github.com/OpenPSS/LibCXML.git
