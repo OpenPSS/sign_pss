@@ -2,7 +2,6 @@
 #define LIB_CXML_READER_H 1
 #include <string>
 #include <fstream>
-#include <filesystem>
 #include "CXMLFile.hpp"
 #include "CXMLStream.hpp"
 

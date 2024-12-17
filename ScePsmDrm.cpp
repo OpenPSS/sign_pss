@@ -7,8 +7,7 @@
 #include "annex_k.hpp"
 
 #ifndef _WIN32
-#include <byteswap.h>
-#define _byteswap_ulong bswap_32
+#define _byteswap_ulong __builtin_bswap32
 #endif
 
 bool CreateFakeLicense(std::string licenseFolder, std::string contentId, uint8_t* gameKey, uint8_t* vitaHmacKey, uint8_t* androidHmacKey) {
