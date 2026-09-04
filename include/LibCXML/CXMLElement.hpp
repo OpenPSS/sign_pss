@@ -3,6 +3,7 @@
 #include "CXMLFile.hpp"
 #include "CXMLReader.hpp"
 #include "CXMLAttributeBase.hpp"
+#include <memory>
 #include <vector>
 
 namespace LibCXML {
@@ -12,7 +13,7 @@ namespace LibCXML {
 		void readCurrentElement();
 		void readCurrentAttribute();
 
-		CXMLReader* reader;
+		std::unique_ptr<CXMLReader> reader = nullptr;
 		CxmlElementHeader curElemPtr;
 		std::string elementName;
 

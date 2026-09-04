@@ -5,9 +5,9 @@
 #include <string>
 #include <vector>
 #include <LibCXML/LibCXML.hpp>
-
+#include <memory>
 #define READATTRIBUTE(TYPE, VALUE, SET) { \
-		LibCXML::CXMLAttribute<TYPE>* attribute = element->GetAttribute<LibCXML::CXMLAttribute<TYPE>*>(VALUE); \
+		LibCXML::CXMLAttribute<TYPE>* attribute = element->GetAttribute<TYPE>(VALUE); \
 		if (attribute != nullptr) { \
 			SET = attribute->AttributeValue(); \
 		} \
@@ -33,11 +33,11 @@ typedef struct RatingInfo {
 
 class AppInfo {
 private:
-	LibCXML::CXMLElement* element;
+	std::unique_ptr<LibCXML::CXMLElement> element = nullptr;
 	bool nextElement();
 public: 
 	AppInfo(std::string& appInfoFile);
-	~AppInfo();
+	~AppInfo() = default;
 	bool IsPsmUnity();
 	bool Validate();
 
@@ -73,10 +73,10 @@ public:
 	std::vector<RatingInfo> RatingList;
 
 	// <images>
-	LibCXML::CXMLStream* Splash854x480 = nullptr;
-	LibCXML::CXMLStream* Icon128x128 = nullptr;
-	LibCXML::CXMLStream* Icon512x512 = nullptr;
-	LibCXML::CXMLStream* Icon256x256 = nullptr;
+	LibCXML::CXMLStream Splash854x480;
+	LibCXML::CXMLStream Icon128x128;
+	LibCXML::CXMLStream Icon512x512;
+	LibCXML::CXMLStream Icon256x256;
 
 	// <genre_list>
 	std::vector<std::string> GenreList;
@@ -86,7 +86,7 @@ public:
 	std::string Website = "";
 
 	// <copyright> 
-	LibCXML::CXMLStream* CopyrightText = nullptr;
+	LibCXML::CXMLStream CopyrightText;
 	std::string Author = "";
 
 	// <purchase>

@@ -12,14 +12,20 @@ namespace LibCXML {
 	private:
 		T attributeValue;
 	public:
-		CXMLAttribute(const std::string& cxmlAttributeName, T cxnlAttributeValue) {
+		template <typename... Args, typename = T> CXMLAttribute(const std::string& cxmlAttributeName, Args&&... args) {
 			this->attributeName = cxmlAttributeName;
-			this->attributeValue = cxnlAttributeValue;
+			this->attributeValue = T(std::forward<Args>(args)...);
 		}
-		~CXMLAttribute();
+
+		CXMLAttribute(const std::string& cxmlAttributeName, T cxmlAttributeValue) {
+			this->attributeName = cxmlAttributeName;
+			this->attributeValue = cxmlAttributeValue;
+		}
+		~CXMLAttribute() override = default;
 		T AttributeValue() {
 			return attributeValue;
 		}
+
 	};
 }
 

@@ -9,6 +9,7 @@ namespace LibCXML {
 	protected:
 		std::string attributeName;
 	public:
+		virtual ~CXMLAttributeBase() = default;
 		std::string AttributeName();
 	};
 

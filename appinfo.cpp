@@ -4,8 +4,10 @@
 
 #include <string>
 #include <iostream>
+#include <memory>
 #include <LibCXML/LibCXML.hpp>
 
+using namespace LibCXML;
 
 bool AppInfo::nextElement() {
 	// goto next element
@@ -47,12 +49,12 @@ bool AppInfo::Validate() {
 		return false;
 	}
 
-	if (this->Icon128x128 == nullptr || this->Icon256x256 == nullptr || this->Icon512x512 == nullptr || this->Splash854x480 == nullptr) {
+	if (this->Icon128x128.Empty() || this->Icon256x256.Empty() || this->Icon512x512.Empty() || this->Splash854x480.Empty()) {
 		std::cerr << "[APP.INFO] Missing one or more images (icon256x256, icon512x512  or splash854x480)" << std::endl;
 		return false;
 	}
 
-	if (this->CopyrightText == nullptr) {
+	if (this->CopyrightText.Empty()) {
 		std::cerr << "[APP.INFO] Copyright.txt is missing!" << std::endl;
 		return false;
 	}
@@ -93,10 +95,9 @@ bool AppInfo::Validate() {
 
 AppInfo::AppInfo(std::string& appInfoFile) {
 
-	this->element = new LibCXML::CXMLElement(appInfoFile, "PSMA");
+	this->element = std::make_unique<LibCXML::CXMLElement>(appInfoFile, "PSMA");
 	std::string parserMode = "";
 	ProductInfo productInfo = ProductInfo();
-
 	if (this->element != nullptr) {
 		do {
 			if (element->ElementName() == "name") parserMode = element->ElementName();
@@ -179,10 +180,10 @@ AppInfo::AppInfo(std::string& appInfoFile) {
 				this->RatingList.push_back(ratingInfo);
 			}
 			else if (element->ElementName() == "images") {
-				READATTRIBUTE(LibCXML::CXMLStream*, "splash_854x480", this->Splash854x480);
-				READATTRIBUTE(LibCXML::CXMLStream*, "icon_128x128", this->Icon128x128);
-				READATTRIBUTE(LibCXML::CXMLStream*, "icon_512x512", this->Icon512x512);
-				READATTRIBUTE(LibCXML::CXMLStream*, "icon_256x256", this->Icon256x256);
+				READATTRIBUTE(CXMLStream, "splash_854x480", this->Splash854x480);
+				READATTRIBUTE(CXMLStream, "icon_128x128", this->Icon128x128);
+				READATTRIBUTE(CXMLStream, "icon_512x512", this->Icon512x512);
+				READATTRIBUTE(CXMLStream, "icon_256x256", this->Icon256x256);
 			}
 			else if (element->ElementName() == "genre") {
 				std::string strGenre;
@@ -193,7 +194,7 @@ AppInfo::AppInfo(std::string& appInfoFile) {
 				READATTRIBUTE(std::string, "href", this->Website);
 			}
 			else if (element->ElementName() == "copyright") {
-				READATTRIBUTE(LibCXML::CXMLStream*, "text", this->CopyrightText);
+				READATTRIBUTE(CXMLStream, "text", this->CopyrightText);
 				READATTRIBUTE(std::string, "author", this->Author);
 			}
 			else if (element->ElementName() == "product") {
@@ -224,6 +225,3 @@ AppInfo::AppInfo(std::string& appInfoFile) {
 	}
 }
 
-AppInfo::~AppInfo() {
-	delete element;
-}

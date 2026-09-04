@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.10.35013.160
+# Visual Studio Version 18
+VisualStudioVersion = 18.6.11822.322 stable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "psm_encryptor", "subprojects\psm_encryptor\psm_encryptor.vcxproj", "{7EA15EEC-DF0A-4531-B87A-5DAF84C8BB8C}"
 EndProject
@@ -37,14 +37,14 @@ Global
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release_Static|x64.Build.0 = Release|x64
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release_Static|x86.ActiveCfg = Release|Win32
 		{162A2A29-1F10-446F-897B-8C5C0EFA0290}.Release_Static|x86.Build.0 = Release|Win32
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.ActiveCfg = Debug_Static|x64
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.Build.0 = Debug_Static|x64
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.ActiveCfg = Debug_Static|Win32
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.Build.0 = Debug_Static|Win32
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.ActiveCfg = Release_Static|x64
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.Build.0 = Release_Static|x64
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.ActiveCfg = Release_Static|Win32
-		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.Build.0 = Release_Static|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.ActiveCfg = Debug_WinXP|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x64.Build.0 = Debug_WinXP|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.ActiveCfg = Debug_WinXP|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Debug_Static|x86.Build.0 = Debug_WinXP|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.ActiveCfg = Release_WinXP|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x64.Build.0 = Release_WinXP|x64
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.ActiveCfg = Release_WinXP|Win32
+		{C196D659-BD55-4FBE-96EE-457D800BCA52}.Release_Static|x86.Build.0 = Release_WinXP|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
