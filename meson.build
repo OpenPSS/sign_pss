@@ -1,11 +1,10 @@
 project('sign_pss', 'cpp',
   version : '0.1',
-  default_options : ['warning_level=3', 'cpp_std=c++14'])
+  default_options : ['warning_level=3', 'cpp_std=c++14', 'default_library=static'])
 
 cpp = meson.get_compiler('cpp')
 
 dirbase = meson.current_source_dir()
-inc = include_directories('include')
 
 libCXML_proj = subproject('LibCXML')
 libCXML_dep = libCXML_proj.get_variable('libCXML_dep')
@@ -20,7 +19,6 @@ executable('sign_pss',
 		   'sign_pss.cpp',
 		   'ScePsmDrm.cpp',
 		   'txt.cpp',
-		   include_directories : inc,
 			dependencies : [
 			  libpsm_encryptor_dep,
 			  libCXML_dep
