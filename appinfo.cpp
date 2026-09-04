@@ -5,7 +5,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
-#include <LibCXML/LibCXML.hpp>
+#include <LibCXML.hpp>
 
 using namespace LibCXML;
 
@@ -94,7 +94,6 @@ bool AppInfo::Validate() {
 
 
 AppInfo::AppInfo(std::string& appInfoFile) {
-
 	this->element = std::make_unique<LibCXML::CXMLElement>(appInfoFile, "PSMA");
 	std::string parserMode = "";
 	ProductInfo productInfo = ProductInfo();

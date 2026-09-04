@@ -4,7 +4,7 @@
 #define _APPINFO_H 1
 #include <string>
 #include <vector>
-#include <LibCXML/LibCXML.hpp>
+#include <LibCXML.hpp>
 #include <memory>
 #define READATTRIBUTE(TYPE, VALUE, SET) { \
 		LibCXML::CXMLAttribute<TYPE>* attribute = element->GetAttribute<TYPE>(VALUE); \

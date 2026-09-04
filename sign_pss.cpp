@@ -120,7 +120,7 @@ bool signApp(std::string inDir, std::string outDir, std::string contentId, uint8
 		return false;
 	}
 
-	AppInfo applicationInfo = AppInfo(appInfoFile);
+	AppInfo applicationInfo(appInfoFile);
 	
 	if (!applicationInfo.Validate()) {
 		std::cerr << "The application may have issues promoting on PSVita, please check your app.info is correct!" << std::endl;
