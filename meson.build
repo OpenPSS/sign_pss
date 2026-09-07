@@ -12,6 +12,13 @@ libCXML_dep = libCXML_proj.get_variable('libCXML_dep')
 libpsm_encryptor = subproject('psm_encryptor')
 libpsm_encryptor_dep = libpsm_encryptor.get_variable('libpsm_encryptor_dep')
 
+cargs = [] 
+largs = [] 
+if target_machine.system() == 'darwin'
+    cargs += ['-arch', 'arm64', '-arch', 'x86_64']
+    largs += ['-arch', 'arm64', '-arch', 'x86_64']
+endif
+
 executable('sign_pss',
 		   'appinfo.cpp',
 		   'io.cpp',
@@ -19,8 +26,11 @@ executable('sign_pss',
 		   'sign_pss.cpp',
 		   'ScePsmDrm.cpp',
 		   'txt.cpp',
-			dependencies : [
-			  libpsm_encryptor_dep,
-			  libCXML_dep
-			])
+		    dependencies : [
+		      libpsm_encryptor_dep,
+		      libCXML_dep
+		    ],
+		    cpp_args: cargs,
+		    link_args: largs
+)
 
